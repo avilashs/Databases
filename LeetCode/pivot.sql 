@@ -1,0 +1,30 @@
+--https://livesql.oracle.com/
+-- schema name : olym 
+-- requirement show the medal count by country
+select * from olym.OLYM_MEDALS_VIEW;
+
+
+--Using Pivot:
+
+select * from (
+ select noc, medal from olym.OLYM_MEDALS_VIEW
+)
+pivot ( 
+ count(*) for medal in ( 'Gold' gold, 'Silver' silver, 'Bronze' bronze )
+)
+order  by 2 desc, 3 desc, 4 desc
+fetch first 5 rows only;
+
+-- Using Decode
+select 
+noc,
+sum(decode(medal,'Gold',1,0)) Gold,
+sum(decode(medal,'Silver',1,0)) Silver,
+sum(decode(medal,'Bronze',1,0)) Bronze
+from 
+olym.OLYM_MEDALS_VIEW
+group by 
+noc
+order by 
+2 desc,3 desc,4 desc
+fetch first 5 rows only;
